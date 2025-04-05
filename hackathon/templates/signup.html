@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    {% load static %}
+
+    <!-- External CSS and fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <!-- Internal CSS for styling -->
+    <style>
+        body {
+            background-image: url("{% static 'images/bg1.jpeg' %}");
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            height: 40px;
+            margin-top: 5px;
+            padding: 0 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form action="{% url 'signup' %}" method="post">
+            {% csrf_token %}
+            <h3>CREATE ACCOUNT</h3>
+
+
+            {% if messages %}
+            {% for message in messages %}
+            <div style="color: red; margin-bottom: 10px;">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Username field (Only Alphabets, No duplicates) -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a unique username"
+                    pattern="[A-Za-z]+" title="Only alphabets allowed" required>
+                <span id="username-error" class="error-message"></span>
+            </div>
+
+            <!-- Email field -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Password field -->
+            <div class="form-group">
+                <label for="password1">Password</label>
+                <input type="password" id="password1" name="password1"
+                    placeholder="Password (min 8 characters, 1 letter, 1 number, 1 symbol)"
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                    title="At least one letter, one number, one special character, and at least 8 characters long"
+                    required>
+            </div>
+
+            <!-- Confirm Password field -->
+            <div class="form-group">
+                <label for="password2">Confirm Password</label>
+                <input type="password" id="password2" name="password2" placeholder="Confirm Password" required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit">Signup</button>
+
+            <!-- Link to login page -->
+            <p class="signup-link">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </form>
+    </div>
+
+    <!-- JavaScript to check for duplicate usernames -->
+    <script>
+        document.getElementById('username').addEventListener('blur', function () {
+            let username = this.value;
+            let errorMessage = document.getElementById('username-error');
+
+            fetch("{% url 'check_username' %}?username=" + username)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        errorMessage.textContent = "Username already taken. Choose another.";
+                        this.setCustomValidity("Username already taken.");
+                    } else {
+                        errorMessage.textContent = "";
+                        this.setCustomValidity("");
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>

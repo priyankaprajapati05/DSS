@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Document Matcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    {% load static %}
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 12px 0;
+            font-size: 16px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+            padding-left: 16px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .welcome {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        .upload-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .upload-box label {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .upload-box input[type="file"] {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .upload-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .upload-box button:hover {
+            background-color: #0056b3;
+        }
+
+        h3 {
+            margin-top: 40px;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            margin-bottom: 12px;
+            background-color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        ul li a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: white;
+            background-color: #dc3545;
+        }
+
+        .message.success {
+            background-color: #28a745;
+        }
+
+        .message.warning {
+            background-color: #ffc107;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <a href="#">🏠 Home</a>
+        <a href="#">📤 Upload Documents</a>
+        <a href="#">🔍 Match Documents</a>
+        <a href="#">📁 My Documents</a>
+        <a href="{% url 'credits_home' %}">💳 Credits</a>
+        <a href="{% url 'logout' %}">🚪 Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome">
+            Hello, <strong>{{ request.user.username }}</strong>!
+        </div>
+        <h1>Document Scanning and Matching</h1>
+
+        <div class="upload-box">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="doc">Select a .txt document:</label>
+                <input type="file" name="document" accept=".txt" required>
+                <br>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+
+        <h3>Your Uploaded Documents:</h3>
+        <ul>
+            {% for doc in documents %}
+            <li><a href="{{ doc.file.url }}" target="_blank">{{ doc.file.name }}</a> (Uploaded: {{ doc.uploaded_at }})
+            </li>
+            {% empty %}
+            <li>No documents uploaded yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</body>
+
+</html>

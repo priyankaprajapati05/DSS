@@ -1,0 +1,23 @@
+<h3>Your Credit Requests</h3>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+    {% for req in requests %}
+    <tr>
+        <td>{{ req.timestamp }}</td>
+        <td>
+            {% if req.status == 'Accepted' %}
+                <span style="color: green;">{{ req.status }}</span>
+            {% elif req.status == 'Rejected' %}
+                <span style="color: red;">{{ req.status }}</span>
+            {% else %}
+                <span style="color: gray;">{{ req.status }}</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2">No requests found.</td></tr>
+    {% endfor %}
+</table>

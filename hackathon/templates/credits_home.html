@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Credits</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .message {
+            padding: 12px;
+            background-color: #e9f9ef;
+            border: 1px solid #27ae60;
+            color: #2c662d;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ecf0f1;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #1c5980;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Credits</h2>
+        <p><strong>Remaining Credits:</strong> {{ remaining_credits }}</p>
+
+
+
+        <br>
+        <hr>
+        <h3>Send a Credit Request</h3>
+        <form method="post" action="{% url 'send_credit_request' %}">
+            {% csrf_token %}
+            <button type="submit">Send Request</button>
+        </form>
+        <br>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+
+        <br>
+        <hr>
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 10px; background-color: #f4f8ff; max-width: 400px; margin-top: 20px;">
+            <h3 style="margin-top: 0; color: #2c3e50;">Request Summary</h3>
+            <ul style="list-style-type: none; padding: 0; font-size: 16px;">
+                <li><strong>Total Requests Sent:</strong> {{ total_requests }}</li>
+            </ul>
+        </div>
+        
+
+        <a class="back-link" href="{% url 'home' %}">&larr; Back to Home</a>
+    </div>
+</body>
+
+</html>

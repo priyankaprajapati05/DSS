@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 20px;
+            flex-grow: 1;
+            background-color: #f4f4f4;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .btn.danger {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h3 style="text-align:center;">Admin</h3>
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+        <a href="#">Scan Analytics</a>
+        <a href="#">Top Users</a>
+        <a href="{% url 'accepted_requests' %}">Accepted Requests</a>
+        <a href="{% url 'rejected_requests' %}">Rejected Requests</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+    
+
+    <div class="main">
+        <h2>Welcome, Admin</h2>
+
+        <div class="card">
+            <h3>Uploaded Documents</h3>
+            {% if documents %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>File Name</th>
+                        <th>Uploaded At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        <td>{{ doc.user.username }}</td>
+                        <td>{{ doc.file.name }}</td>
+                        <td>{{ doc.uploaded_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No documents uploaded yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h3>Pending Credit Requests</h3>
+            {% if credit_requests %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in credit_requests %}
+                    <tr>
+                        <td>{{ req.user.username }}</td>
+                        <td>
+                            <form method="post" action="{% url 'handle_credit_request' req.id 'accept' %}"
+                                style="display:inline;">
+                                {% csrf_token %}
+                                <button class="btn">Accept</button>
+                            </form>
+                            <form method="post" action="{% url 'handle_credit_request' req.id 'reject' %}"
+                                style="display:inline; margin-left: 10px;">
+                                {% csrf_token %}
+                                <button class="btn danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No credit requests pending.</p>
+            {% endif %}
+        </div>
+
+        <!-- Scan Analytics -->
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <h3>Scans Today</h3>
+            <p style="font-size: 24px;">📄 {{ scans_today }}</p>
+        </div>
+
+        <!-- Top Users -->
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px;">
+            <h3>Top Users by Uploads</h3>
+            <ul>
+                {% for user in top_users %}
+                <li>{{ user.username }} — {{ user.upload_count }} uploads</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
